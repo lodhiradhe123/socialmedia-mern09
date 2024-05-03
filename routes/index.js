@@ -2,6 +2,10 @@ var express = require("express");
 var router = express.Router();
 
 const User = require("../models/userSchema");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+
+passport.use(new LocalStrategy(User.authenticate()));
 
 router.get("/", function (req, res, next) {
     res.render("index");
@@ -17,8 +21,8 @@ router.get("/register", function (req, res, next) {
 
 router.post("/register-user", async function (req, res, next) {
     try {
-        const newUser = new User(req.body);
-        await newUser.save();
+        const { username, email, name, password } = req.body;
+        await User.register({ name, username, email }, password);
         res.redirect("/login");
     } catch (error) {
         res.send(error);
