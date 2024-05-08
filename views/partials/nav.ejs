@@ -1,6 +1,12 @@
 <nav class="w-screen flex gap-x-10 font-semibold justify-center py-5 text-red-400">
-    <a href="/">Home</a>
-    <a href="/login">Login</a>
-    <a href="/about">About Us</a>
-    <a href="/logout-user">Logout</a>
+
+    <% if(user) { %>
+        <a href="/profile">Home</a>
+        <a href="/logout-user">Logout</a>
+        <% }else { %>
+            <a href="/">Home</a>
+            <a href="/login">Login</a>
+            <% } %>
+                <a href="/about">About Us</a>
+
 </nav>

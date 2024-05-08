@@ -8,11 +8,11 @@ const LocalStrategy = require("passport-local");
 passport.use(new LocalStrategy(User.authenticate()));
 
 router.get("/", function (req, res, next) {
-    res.render("index");
+    res.render("index", { user: req.user });
 });
 
 router.get("/register", function (req, res, next) {
-    res.render("register");
+    res.render("register", { user: req.user });
 });
 
 router.post("/register-user", async function (req, res, next) {
@@ -26,7 +26,7 @@ router.post("/register-user", async function (req, res, next) {
 });
 
 router.get("/login", function (req, res, next) {
-    res.render("login");
+    res.render("login", { user: req.user });
 });
 
 router.post(
@@ -39,11 +39,16 @@ router.post(
 );
 
 router.get("/about", function (req, res, next) {
-    res.render("about");
+    res.render("about", { user: req.user });
 });
 
 router.get("/profile", isLoggedIn, function (req, res, next) {
-    res.render("profile");
+    console.log(req.user);
+    res.render("profile", { user: req.user });
+});
+
+router.get("/update-user/:id", isLoggedIn, function (req, res, next) {
+    res.render("userupdate", { user: req.user });
 });
 
 router.get("/logout-user", function (req, res, next) {
