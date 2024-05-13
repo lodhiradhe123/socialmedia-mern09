@@ -68,10 +68,43 @@ router.post("/reset-password/:id", isLoggedIn, async function (req, res, next) {
     }
 });
 
-router.get("/logout-user", function (req, res, next) {
+router.get("/logout-user/:id", isLoggedIn, function (req, res, next) {
     req.logout(() => {
         res.redirect("/login");
     });
+});
+
+router.get("/forget-email", function (req, res, next) {
+    res.render("userforgetemail", { user: req.user });
+});
+
+router.post("/forget-email", async function (req, res, next) {
+    try {
+        const user = await User.findOne({ email: req.body.email });
+
+        if (user) {
+            res.redirect(`/forget-password/${user._id}`);
+        } else {
+            res.redirect("/forget-email");
+        }
+    } catch (error) {
+        res.send(error);
+    }
+});
+
+router.get("/forget-password/:id", function (req, res, next) {
+    res.render("userforgetpassword", { user: req.user, id: req.params.id });
+});
+
+router.post("/forget-password/:id", async function (req, res, next) {
+    try {
+        const user = await User.findById(req.params.id);
+        await user.setPassword(req.body.password);
+        await user.save();
+        res.redirect("/login");
+    } catch (error) {
+        res.send(error);
+    }
 });
 
 function isLoggedIn(req, res, next) {

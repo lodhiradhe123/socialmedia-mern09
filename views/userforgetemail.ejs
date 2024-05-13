@@ -1,0 +1,24 @@
+<%- include('partials/header')%>
+  <!--  -->
+  <%- include('partials/nav')%>
+    <!--  -->
+    <div class=" rounded-xl w-[80%] pt-[5%] m-auto">
+      <h1 class="bg-red-200 w-[50%] rounded-xl p-3 m-auto text-center text-5xl font-extrabold text-red-400">Forget
+        Password
+        Reset
+      </h1>
+
+
+      <form action="/forget-email" class=" mt-[5%] text-center" method="post">
+
+        <input class="w-[40%] mb-10 border border-zinc-500 p-3 rounded-md text-xl " type="email"
+          placeholder="email@existing.user" name="email">
+        <button class="mt-5 text-center block w-[40%] m-auto hover:bg-red-600 rounded text-white py-3 px-5 bg-red-400" ">Submit Email</button>
+      </form>
+
+
+
+    
+    </div>
+    <!--  -->
+    <%- include('partials/footer')%>
