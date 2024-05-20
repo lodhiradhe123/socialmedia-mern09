@@ -7,6 +7,7 @@
             <!--  -->
             <div class="card w-[23%] mr-5 mb-5">
                 <div class="flex items-center mb-2">
+
                     <img class="w-[7vh] h-[7vh] rounded-full object-cover"
                         src="https://plus.unsplash.com/premium_photo-1694618623649-51733e6001fc?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                         alt="">
@@ -55,6 +56,8 @@
             class=" flex justify-around items-center rounded-xl fixed left-[50%] bottom-[5%] translate-x-[-50%] w-[30%] py-3  bg-red-300 text-2xl text-white">
             <i class="ri-search-line"></i>
             <i class="ri-add-large-line"></i>
-            <a href="/update-user/<%= user._id%>" class="ri-user-fill"></a>
+            <a href="/update-user/<%= user._id%>">
+                <img class="rounded-full w-[2vmax] h-[2vmax] " src="<%= user.profilepic%>" alt="">
+            </a>
         </div>
         <%- include('partials/footer')%>
