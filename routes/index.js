@@ -73,15 +73,21 @@ router.post("/reset-password/:id", isLoggedIn, async function (req, res, next) {
 });
 
 router.post("/image/:id", isLoggedIn, upload, async function (req, res, next) {
-    if (req.user.profilepic !== "default.png") {
-        fs.unlinkSync(
-            path.join(__dirname, "..", "public", "images", req.user.profilepic)
-        );
-    }
-    req.user.profilepic = req.file.filename;
-    await req.user.save();
-    res.redirect(`/update-user/${req.params.id}`);
     try {
+        if (req.user.profilepic !== "default.png") {
+            fs.unlinkSync(
+                path.join(
+                    __dirname,
+                    "..",
+                    "public",
+                    "images",
+                    req.user.profilepic
+                )
+            );
+        }
+        req.user.profilepic = req.file.filename;
+        await req.user.save();
+        res.redirect(`/update-user/${req.params.id}`);
     } catch (error) {
         res.send(err);
     }
