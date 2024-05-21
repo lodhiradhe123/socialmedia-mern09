@@ -1,6 +1,10 @@
 var express = require("express");
 var router = express.Router();
 
+const upload = require("../utils/multer").single("profilepic");
+const fs = require("fs");
+const path = require("path");
+
 const User = require("../models/userSchema");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -65,6 +69,21 @@ router.post("/reset-password/:id", isLoggedIn, async function (req, res, next) {
         res.redirect(`/update-user/${req.user._id}`);
     } catch (error) {
         res.send(error);
+    }
+});
+
+router.post("/image/:id", isLoggedIn, upload, async function (req, res, next) {
+    if (req.user.profilepic !== "default.png") {
+        fs.unlinkSync(
+            path.join(__dirname, "..", "public", "images", req.user.profilepic)
+        );
+    }
+    req.user.profilepic = req.file.filename;
+    await req.user.save();
+    res.redirect(`/update-user/${req.params.id}`);
+    try {
+    } catch (error) {
+        res.send(err);
     }
 });
 

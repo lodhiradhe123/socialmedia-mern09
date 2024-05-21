@@ -18,13 +18,13 @@
         <div class="w-full pt-[3%] m-auto p-5 flex">
 
           <!--  -->
-          <form class="hidden form-image" action="/image/<%= user._id%>" method="post">
+          <form class="hidden form-image" action="/image/<%= user._id%>" method="post" enctype="multipart/form-data">
             <input class="input-image" type="file" name="profilepic">
 
           </form>
           <!--  -->
-          <img class="preview-image mr-10 w-[20vh] h-[20vh] rounded-full object-cover" src="<%= user.profilepic%>"
-            alt="">
+          <img class="preview-image mr-10 w-[20vh] h-[20vh] rounded-full object-cover"
+            src="/images/<%= user.profilepic%>" alt="">
           <div>
             <h1 class="  text-5xl font-extrabold text-red-400">
               <%= user.name%>
