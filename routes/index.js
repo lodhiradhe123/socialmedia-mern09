@@ -93,6 +93,28 @@ router.post("/image/:id", isLoggedIn, upload, async function (req, res, next) {
     }
 });
 
+router.get("/delete-user/:id", isLoggedIn, async function (req, res, next) {
+    try {
+        const deleteduser = await User.findByIdAndDelete(req.params.id);
+
+         if (deleteduser.profilepic !== "default.png") {
+             fs.unlinkSync(
+                 path.join(
+                     __dirname,
+                     "..",
+                     "public",
+                     "images",
+                     deleteduser.profilepic
+                 )
+             );
+         }
+
+        res.redirect("/login");
+    } catch (error) {
+        res.send(error);
+    }
+});
+
 router.get("/logout-user/:id", isLoggedIn, function (req, res, next) {
     req.logout(() => {
         res.redirect("/login");
