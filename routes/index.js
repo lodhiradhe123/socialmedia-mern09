@@ -8,6 +8,7 @@ const path = require("path");
 const User = require("../models/userSchema");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const sendmail = require("../utils/mail");
 
 passport.use(new LocalStrategy(User.authenticate()));
 
@@ -97,17 +98,17 @@ router.get("/delete-user/:id", isLoggedIn, async function (req, res, next) {
     try {
         const deleteduser = await User.findByIdAndDelete(req.params.id);
 
-         if (deleteduser.profilepic !== "default.png") {
-             fs.unlinkSync(
-                 path.join(
-                     __dirname,
-                     "..",
-                     "public",
-                     "images",
-                     deleteduser.profilepic
-                 )
-             );
-         }
+        if (deleteduser.profilepic !== "default.png") {
+            fs.unlinkSync(
+                path.join(
+                    __dirname,
+                    "..",
+                    "public",
+                    "images",
+                    deleteduser.profilepic
+                )
+            );
+        }
 
         res.redirect("/login");
     } catch (error) {
@@ -130,7 +131,8 @@ router.post("/forget-email", async function (req, res, next) {
         const user = await User.findOne({ email: req.body.email });
 
         if (user) {
-            res.redirect(`/forget-password/${user._id}`);
+            sendmail(res, req.body.email, user);
+            // res.redirect(`/forget-password/${user._id}`);
         } else {
             res.redirect("/forget-email");
         }
@@ -146,8 +148,13 @@ router.get("/forget-password/:id", function (req, res, next) {
 router.post("/forget-password/:id", async function (req, res, next) {
     try {
         const user = await User.findById(req.params.id);
-        await user.setPassword(req.body.password);
-        await user.save();
+        if (user.resetPasswordToken == 1) {
+            await user.setPassword(req.body.password);
+            user.resetPasswordToken = 0;
+            await user.save();
+        } else {
+            res.send("Link Expired Try Again!");
+        }
         res.redirect("/login");
     } catch (error) {
         res.send(error);
