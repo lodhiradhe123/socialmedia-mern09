@@ -128,10 +128,18 @@ router.get("/forget-email", function (req, res, next) {
 
 router.post("/forget-email", async function (req, res, next) {
     try {
-        const user = await User.findOne({ email: req.body.email });
+        // const url = `${req.protocol}://${req.get("host")}${
+        //     req.originalUrl
+        // }`;
 
+        const user = await User.findOne({ email: req.body.email });
+        res.redirect(`/forget-password/${user._id}`);
         if (user) {
-            sendmail(res, req.body.email, user);
+            const url = `${req.protocol}://${req.get("host")}/forget-password/${
+                user._id
+            }`;
+
+            sendmail(res, user, url);
             // res.redirect(`/forget-password/${user._id}`);
         } else {
             res.redirect("/forget-email");
@@ -148,14 +156,15 @@ router.get("/forget-password/:id", function (req, res, next) {
 router.post("/forget-password/:id", async function (req, res, next) {
     try {
         const user = await User.findById(req.params.id);
-        if (user.resetPasswordToken == 1) {
+
+        if (user.resetPasswordToken === 1) {
             await user.setPassword(req.body.password);
             user.resetPasswordToken = 0;
             await user.save();
+            res.redirect("/login");
         } else {
             res.send("Link Expired Try Again!");
         }
-        res.redirect("/login");
     } catch (error) {
         res.send(error);
     }
