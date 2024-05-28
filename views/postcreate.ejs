@@ -1,0 +1,29 @@
+<%- include('partials/header')%>
+  <!--  -->
+  <%- include('partials/nav')%>
+    <!--  -->
+    <div class=" rounded-xl w-[80%] pt-[3%] m-auto">
+      <h1 class="bg-red-200 w-[50%] rounded-xl p-3 m-auto text-center text-5xl font-extrabold text-red-400">Create Post
+
+      </h1>
+
+
+      <form action="/post-create" class=" mt-[3%] text-center" method="post" enctype="multipart/form-data">
+
+        <input class="w-[40%] mb-10  border border-zinc-500 p-3 rounded-md text-xl " type="file" name="media">
+        <br>
+        <input class="w-[40%] mb-10  border border-zinc-500 p-3 rounded-md text-xl " type="text"
+          placeholder="Title Of Post" name="title">
+        <br>
+
+        <button
+          class="mt-5 text-center block w-[40%] m-auto hover:bg-red-600 rounded text-white py-3 px-5 bg-red-400">Create
+          Post</button>
+      </form>
+
+
+
+
+    </div>
+    <!--  -->
+    <%- include('partials/footer')%>

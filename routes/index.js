@@ -1,10 +1,11 @@
 var express = require("express");
 var router = express.Router();
 
-const upload = require("../utils/multer").single("profilepic");
+const upload = require("../utils/multer");
 const fs = require("fs");
 const path = require("path");
 
+const Post = require("../models/postSchema");
 const User = require("../models/userSchema");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -47,9 +48,13 @@ router.get("/about", function (req, res, next) {
     res.render("about", { user: req.user });
 });
 
-router.get("/profile", isLoggedIn, function (req, res, next) {
-    console.log(req.user);
-    res.render("profile", { user: req.user });
+router.get("/profile", isLoggedIn, async function (req, res, next) {
+    try {
+        const posts = await Post.find().populate("user");
+        res.render("profile", { user: req.user, posts });
+    } catch (error) {
+        res.send(error);
+    }
 });
 
 router.get("/update-user/:id", isLoggedIn, function (req, res, next) {
@@ -73,26 +78,31 @@ router.post("/reset-password/:id", isLoggedIn, async function (req, res, next) {
     }
 });
 
-router.post("/image/:id", isLoggedIn, upload, async function (req, res, next) {
-    try {
-        if (req.user.profilepic !== "default.png") {
-            fs.unlinkSync(
-                path.join(
-                    __dirname,
-                    "..",
-                    "public",
-                    "images",
-                    req.user.profilepic
-                )
-            );
+router.post(
+    "/image/:id",
+    isLoggedIn,
+    upload.single("profilepic"),
+    async function (req, res, next) {
+        try {
+            if (req.user.profilepic !== "default.png") {
+                fs.unlinkSync(
+                    path.join(
+                        __dirname,
+                        "..",
+                        "public",
+                        "images",
+                        req.user.profilepic
+                    )
+                );
+            }
+            req.user.profilepic = req.file.filename;
+            await req.user.save();
+            res.redirect(`/update-user/${req.params.id}`);
+        } catch (error) {
+            res.send(err);
         }
-        req.user.profilepic = req.file.filename;
-        await req.user.save();
-        res.redirect(`/update-user/${req.params.id}`);
-    } catch (error) {
-        res.send(err);
     }
-});
+);
 
 router.get("/delete-user/:id", isLoggedIn, async function (req, res, next) {
     try {
@@ -115,6 +125,34 @@ router.get("/delete-user/:id", isLoggedIn, async function (req, res, next) {
         res.send(error);
     }
 });
+
+router.get("/post-create/", isLoggedIn, function (req, res, next) {
+    res.render("postcreate", { user: req.user });
+});
+
+router.post(
+    "/post-create/",
+    isLoggedIn,
+    upload.single("media"),
+    async function (req, res, next) {
+        try {
+            const newpost = new Post({
+                title: req.body.title,
+                media: req.file.filename,
+                user: req.user._id,
+            });
+
+            req.user.posts.push(newpost._id);
+
+            await newpost.save();
+            await req.user.save();
+
+            res.redirect("/profile");
+        } catch (error) {
+            res.send(err);
+        }
+    }
+);
 
 router.get("/logout-user/:id", isLoggedIn, function (req, res, next) {
     req.logout(() => {
