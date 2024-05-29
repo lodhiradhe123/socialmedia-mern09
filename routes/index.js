@@ -104,6 +104,21 @@ router.post(
     }
 );
 
+router.get("/like/:postid", isLoggedIn, async function (req, res, next) {
+    try {
+        const post = await Post.findById(req.params.postid);
+        if (post.likes.includes(req.user._id)) {
+            post.likes = post.likes.filter((uid) => uid != req.user.id);
+        } else {
+            post.likes.push(req.user._id);
+        }
+        await post.save();
+        res.redirect("/profile");
+    } catch (error) {
+        res.send(error);
+    }
+});
+
 router.get("/delete-user/:id", isLoggedIn, async function (req, res, next) {
     try {
         const deleteduser = await User.findByIdAndDelete(req.params.id);

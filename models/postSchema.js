@@ -13,6 +13,7 @@ const postSchema = new mongoose.Schema(
             required: [true, "Media is required"],
         },
         user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+        likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
     },
     { timestamps: true }
 );
