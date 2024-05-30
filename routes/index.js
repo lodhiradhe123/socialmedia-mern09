@@ -57,6 +57,14 @@ router.get("/profile", isLoggedIn, async function (req, res, next) {
     }
 });
 
+router.get("/timeline", isLoggedIn, async function (req, res, next) {
+    try {
+        res.render("timeline", { user: await req.user.populate("posts") });
+    } catch (error) {
+        res.send(error);
+    }
+});
+
 router.get("/update-user/:id", isLoggedIn, function (req, res, next) {
     res.render("userupdate", { user: req.user });
 });
@@ -168,6 +176,19 @@ router.post(
         }
     }
 );
+
+router.get("/delete-post/:id", isLoggedIn, async function (req, res, next) {
+    try {
+        const deletepost = await Post.findByIdAndDelete(req.params.id);
+
+        fs.unlinkSync(
+            path.join(__dirname, "..", "public", "images", deletepost.media)
+        );
+        res.redirect("/timeline");
+    } catch (error) {
+        res.send(error);
+    }
+});
 
 router.get("/logout-user/:id", isLoggedIn, function (req, res, next) {
     req.logout(() => {
