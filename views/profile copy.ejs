@@ -1,0 +1,60 @@
+<%- include('partials/header')%>
+    <!--  -->
+    <%- include('partials/nav')%>
+        <!--  -->
+        <div class="rounded-xl w-[80%] pt-[2%]  m-auto flex flex-wrap">
+
+
+
+            <!--  -->
+            <% posts.forEach((post)=> { %>
+                <div class="card w-[23%] mr-5 mb-5">
+                    <div class="flex items-center mb-2">
+
+                        <img class="w-[7vh] h-[7vh] rounded-full object-cover" src="/images/<%= post.user.profilepic %>"
+                            alt="">
+                        <div class="ml-3 ">
+                            <h1 class="text-xl font-bold">
+                                <%= post.user.name %>
+                            </h1>
+                            <small class="text-zinc-600">
+                                <%= post.createdAt.toLocaleTimeString()%> |
+                                    <%= post.createdAt.toLocaleDateString()%>
+                            </small>
+                        </div>
+                    </div>
+                    <img class="w-full h-[40vh]  object-cover" src="/images/<%= post.media%>" alt="">
+                    <div class=" flex items-center mt-1">
+                        <span class="text-md mr-2">
+                            <%= post.likes.length%>
+                        </span>
+                        <a class="text-2xl" href="/like/<%= post._id%>">
+                            <% if(post.likes.includes(user._id)) { %>
+                                <i class="text-red-300 ri-heart-3-fill"></i>
+
+                                <% } else { %>
+                                    <i class="ri-heart-3-line"></i>
+
+                                    <% } %>
+                        </a>
+                        <!-- <i class="ri-chat-3-line"></i> -->
+                    </div>
+                </div>
+                <% }) %>
+                    <!--  -->
+
+
+
+
+
+        </div>
+        <!--  -->
+        <div
+            class=" flex justify-around items-center rounded-xl fixed left-[50%] bottom-[5%] translate-x-[-50%] w-[30%] py-3  bg-red-300 text-2xl text-white">
+            <i class="ri-search-line"></i>
+            <a href="/post-create" class="ri-add-large-line"></a>
+            <a href="/update-user/<%= user._id%>">
+                <img class="rounded-full w-[2vmax] h-[2vmax] " src="/images/<%= user.profilepic%>" alt="">
+            </a>
+        </div>
+        <%- include('partials/footer')%>
